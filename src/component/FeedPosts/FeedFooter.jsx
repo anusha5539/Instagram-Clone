@@ -3,7 +3,7 @@ import { useState } from "react"
 
 import { CommentLogo, NotificationsLogo, UnlikeLogo } from "../../assets/constant";
 
-const FeedFooter = ({username}) => {
+const FeedFooter = ({ username, isProfilePage }) => {
     const [liked, setLiked] = useState(false);
     const [likes, setLikes] = useState(1000);
 
@@ -18,7 +18,7 @@ const FeedFooter = ({username}) => {
         }
     }
     return (
-        <Box mb={10}>
+        <Box mb={10} marginTop={"auto"}>
             <Flex alignItems={"center"} gap={4} width={"full"} pt={0} mb={2} mt={4}>
                 <Box onClick={handleClick} cursor={"pointer"} fontSize={18}>
                     {!liked ? <NotificationsLogo /> : <UnlikeLogo />}
@@ -30,18 +30,24 @@ const FeedFooter = ({username}) => {
             <Text fontSize={"sm"} fontWeight={600}>
                 {likes} likes
             </Text>
-            <Flex gap={2} fontWeight={700} fontSize='sm' my={2}>
-                {username}
-                <Text fontWeight={400}>Feeling good</Text>
-            </Flex>
-            <Text fontSize={"sm"} color={"gray"}>
-                View all 1,000 comments
-            </Text>
+            {!isProfilePage && (
+                <>
+                    <Flex gap={2} fontWeight={700} fontSize='sm' my={2}>
+                        {username}
+                        <Text fontWeight={400}>Feeling good</Text>
+                    </Flex>
+                    <Text fontSize={"sm"} color={"gray"}>
+                        View all 1,000 comments
+                    </Text>
+                </>
+
+            )}
+
             <Flex justifyContent={"space-between"} alignItems={"center"} gap={4} w={"full"}>
                 <InputGroup size='sm'>
                     <Input variant='flushed' placeholder='Add a comment.....' fontSize={14} />
                     <InputRightElement>
-                        <Button bg={"transparent"} color={"blue.500"} cursor={"pointer"} fontSize={14} fontWeight={600} _hover={{ color:"white" }} >Post</Button>
+                        <Button bg={"transparent"} color={"blue.500"} cursor={"pointer"} fontSize={14} fontWeight={600} _hover={{ color: "white" }} >Post</Button>
                     </InputRightElement>
                 </InputGroup>
             </Flex>
