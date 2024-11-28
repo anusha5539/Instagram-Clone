@@ -1,21 +1,15 @@
-import { Box, Container, Flex, Skeleton, SkeletonCircle, VStack } from "@chakra-ui/react"
+import { Box, Container, Flex, Skeleton, SkeletonCircle, Text, VStack } from "@chakra-ui/react"
 import FeedPost from "./FeedPost"
-import { useEffect, useState } from "react";
+import useGetFeedPost from "../../Hooks/useGetFeedPost";
+
 
 
 const FeedPosts = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    // After the 2-second delay, the function inside setTimeout is executed, which calls setIsLoading(false). This updates the state variable isLoading to false.
-    useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false)
-        }, 2000)
-    }, []);
-
+   const {isLoading,posts}=useGetFeedPost();
     return (
         <>
             <Container maxW={"container.sm"} py={10} px={2}>
-                {isLoading && [0, 1, 2, 3].map((_, idx) => (
+                {isLoading && [0, 1, 2].map((_, idx) => (
                     <VStack key={idx} gap={2} alignItems={"flex-start"} mb={10}>
                         <Flex gap={2}>
                             <SkeletonCircle size='10' />
@@ -25,18 +19,17 @@ const FeedPosts = () => {
                             </VStack>
                         </Flex>
                         <Skeleton w={"full"}>
-                            <Box h={"500px"}>contents wrapped</Box>
+                            <Box h={"400px"}>contents wrapped</Box>
 
                         </Skeleton>
                     </VStack>
                 ))}
-                {!isLoading &&(<>
-                    <FeedPost img="/img1.png" username="Jan Brock" avatar="/img1.png" />
-                    <FeedPost img="/img2.png" username="Nicholas Baxter" avatar="/img2.png" />
-                    <FeedPost img="/img3.png" username=" Niki Duncan " avatar="/img3.png" />
-                    <FeedPost img="/img4.png" username="Steven Venegas" avatar="/img4.png" />
-                </>)}
-
+                {!isLoading && posts.length>0 && 
+                posts.map((post)=><FeedPost key={post.id} post={post}></FeedPost>)}
+                {!isLoading && posts.length==0 && (<>
+                    <Text fontSize={"xl"} color={"red"}>Looks Like you don&apos;t have any friends.</Text>
+                    <Text fontSize={"xl"} color={"red"}>Let&apos;s make some now.</Text>
+                </>) }
 
             </Container>
 

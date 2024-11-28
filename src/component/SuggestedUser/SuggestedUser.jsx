@@ -1,26 +1,42 @@
 import { Avatar, Button, Flex, Text, VStack } from "@chakra-ui/react"
-import { useState } from "react";
+import useFollowUser from '/src/Hooks/useFollowUser'
+import useAuthStore from "../../store/authStore";
+import { Link } from "react-router-dom";
 
+const SuggestedUser = ({ user, setUser }) => {
+    const { isFollowing, isUpdating, handleFollowUser } = useFollowUser(user.uid);
+    const authUser = useAuthStore(state => state.user);
+    const onFollowUser = async () => {
+        await handleFollowUser();
+        setUser({
+            ...user,
+            followers: isFollowing ? user.followers.filter((follower) => follower.uid !== authUser.uid) : [...user.followers, authUser],
+        })
+    }
 
-const SuggestedUser = ({ followers, name, avatar }) => {
-    const [isFollowed, setIsFollowed] = useState(true);
     return (
         <>
             <Flex justifyContent={"space-between"} alignItems={"center"} w={"full"} mt={3}>
                 <Flex alignItems={"center"} gap={2}>
-                    <Avatar src={avatar} name="Ann programmer" size='md'></Avatar>
+                    <Link to={`${user.userName}`}>
+                        <Avatar src={user.profilePicURL} name="Ann programmer" size='md'></Avatar>
+                    </Link>
                     <VStack spacing={2}>
-                        <Text fontSize={12} fontWeight={"bold"}>
-                            {name}
-                        </Text>
+                        <Link to={`${user.userName}`}>
+                            <Text fontSize={12} fontWeight={"bold"}>
+                                {user.userName}
+                            </Text>
+                        </Link>
                         <Text color={"gray.500"} fontSize={11}>
-                            {followers} followers
+                            {user.followers.length} followers
                         </Text>
                     </VStack>
                 </Flex>
-                <Button onClick={()=>setIsFollowed(!isFollowed)} fontSize={13} bg={"transparent"} color={"blue.500"} p={0} h={"max-content"} fontWeight={"medium"} cursor={"pointer"} _hover={{color:"white"}}>
-                    {isFollowed? "Follow" :"Unfollow"}
-                </Button>
+                {authUser.uid !== user.uid && (
+                    <Button onClick={onFollowUser} bg={"transparent"} color={"blue.500"} p={0} h={"max-content"} fontWeight={"medium"} cursor={"pointer"} _hover={{ color: "white" }} isLoading={isUpdating}>
+                        {isFollowing ? "Unfollow" : "Follow"}
+                    </Button>
+                )}
 
             </Flex>
         </>
